@@ -95,7 +95,7 @@ const mockEmails: Email[] = [
 const Inbox = () => {
   const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [emails, setEmails] = useState<Email[]>(mockEmails);
+  const [emails, setEmails] = useState<Email[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchLogs = async () => {
@@ -103,7 +103,6 @@ const Inbox = () => {
       setLoading(true);
       const data = await api.getLogs();
       
-      // Backend returns { logs: [...], auto_reply: bool } or could be a direct array
       const logsArray: any[] = Array.isArray(data) ? data : data.logs || [];
       
       const mapped: Email[] = logsArray.map((log: any) => {
@@ -114,10 +113,9 @@ const Inbox = () => {
           }
           
           const isAutoReplied = log.status === "replied" || log.status === "REPLIED";
-          const isEscalated = log.status === "escalated" || log.status === "ESCALATED";
           
           const thread: any[] = [
-             { from: log.sender?.split('@')[0] || "Unknown", body: log.body || "", time: timeStr }
+             { from: log.sender?.split('@')[0] || "Customer", body: log.body || "", time: timeStr }
           ];
           
           if (isAutoReplied && log.reply_content) {
@@ -131,7 +129,7 @@ const Inbox = () => {
 
           return {
              id: String(log.id),
-             from: log.sender?.split('@')[0] || "Unknown",
+             from: log.sender?.split('@')[0] || "Customer",
              fromEmail: log.sender || "",
              subject: log.subject || "No Subject",
              preview: (log.body || "").substring(0, 100) + '...',
@@ -146,8 +144,8 @@ const Inbox = () => {
       });
       setEmails(mapped);
     } catch (e) {
-      console.error("Failed to fetch logs, falling back to mock", e);
-      setEmails(mockEmails);
+      console.error("Failed to fetch logs", e);
+      setEmails([]);
     } finally {
       setLoading(false);
     }

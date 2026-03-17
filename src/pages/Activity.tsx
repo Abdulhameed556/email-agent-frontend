@@ -58,7 +58,7 @@ const Activity = () => {
       ]);
 
       const recent = logs.slice(0, 10).map((log: any) => {
-        const receivedDate = new Date(log.received_at || log.created_at);
+        const receivedDate = new Date(log.created_at || log.received_at);
         let timeStr = receivedDate.toLocaleDateString();
         if (new Date().toDateString() === receivedDate.toDateString()) {
           timeStr = receivedDate.toLocaleTimeString([], {
@@ -68,7 +68,7 @@ const Activity = () => {
         }
 
         const statusText =
-          log.status === "REPLIED" || log.status === "replied" || log.auto_reply_sent
+          log.status === "REPLIED" || log.status === "replied"
             ? "Auto Replied"
             : log.status === "ESCALATED" || log.status === "escalated"
             ? "Escalated"
@@ -77,27 +77,27 @@ const Activity = () => {
         return {
           logId: log.id,
           status: statusText,
-          sender: log.sender?.split("@")[0] || "Unknown",
+          sender: log.sender?.split("@")[0] || "Customer",
           subject: log.subject || "No Subject",
           date: timeStr,
           email: {
             id: String(log.id),
-            from: log.sender?.split("@")[0] || "Unknown",
+            from: log.sender?.split("@")[0] || "Customer",
             fromEmail: log.sender || "",
             subject: log.subject || "No Subject",
-            summary: log.llm_summary || log.summary || "",
-            suggestedReply: log.generated_reply || log.reply_content || "",
+            summary: log.summary || "",
+            suggestedReply: log.reply_content || "",
             thread: [
               {
-                from: log.sender?.split("@")[0] || "Unknown",
-                body: log.body_snippet || log.body || "",
+                from: log.sender?.split("@")[0] || "Customer",
+                body: log.body || "",
                 time: timeStr,
               },
-              ...(log.auto_reply_sent || log.generated_reply
+              ...(log.reply_content
                 ? [
                     {
                       from: "FirstBank AI",
-                      body: log.generated_reply || log.reply_content || "Automated response generated.",
+                      body: log.reply_content,
                       time: timeStr,
                       isAuto: true,
                     },
@@ -110,8 +110,8 @@ const Activity = () => {
 
       setRecentActivity(recent);
     } catch (err) {
-      console.error("Failed to fetch activity data, using fallback", err);
-      // keep defaults
+      console.error("Failed to fetch activity data", err);
+      setRecentActivity([]);
     } finally {
       setLoading(false);
     }

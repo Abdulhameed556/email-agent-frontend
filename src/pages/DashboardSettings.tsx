@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { api } from "@/lib/api";
+import { api, BASE_URL } from "@/lib/api";
 import { toast } from "sonner";
 
 const DashboardSettings = () => {
@@ -90,22 +90,22 @@ const DashboardSettings = () => {
           transition={{ delay: 0.05 }}
           className="gradient-card border border-border rounded-xl p-6 shadow-card"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <Mail className="w-4 h-4 text-muted-foreground" />
-            <h3 className="text-sm font-semibold text-foreground">Connected Email</h3>
-          </div>
           <div className="flex gap-3">
             <Input
               value={connectedEmail}
-              onChange={(e) => setConnectedEmail(e.target.value)}
-              className="bg-secondary border-border text-foreground font-mono text-sm"
+              readOnly
+              className="bg-secondary border-border text-foreground font-mono text-sm opacity-70"
             />
-            <Button variant="outline" className="border-border text-foreground hover:bg-secondary shrink-0">
+            <Button 
+                onClick={() => window.location.href = `${BASE_URL}/auth/login/google`}
+                variant="outline" 
+                className="border-border text-foreground hover:bg-secondary shrink-0"
+            >
               <Globe className="w-4 h-4 mr-2" /> Reconnect
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground mt-3">
-            Connected via Microsoft Exchange · Last synced 2m ago
+          <p className="text-xs text-muted-foreground mt-3 italic">
+            Note: "Reconnect" grants the AI permission to monitor and respond to your Gmail inbox.
           </p>
         </motion.div>
 
