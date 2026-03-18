@@ -94,7 +94,7 @@ const Activity = () => {
                 body: log.body || "",
                 time: timeStr,
               },
-              ...(log.reply_content
+              ...( (log.status?.toLowerCase() === "replied" && log.reply_content)
                 ? [
                     {
                       from: "FirstBank AI",
