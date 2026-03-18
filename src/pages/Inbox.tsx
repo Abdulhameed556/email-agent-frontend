@@ -17,6 +17,7 @@ interface Email {
   unread: boolean;
   hasAttachment: boolean;
   autoReplied: boolean;
+  auto_reply_sent?: boolean;
   status: string;
   summary?: string;                   // short brief summary like screenshot
   suggestedReply?: string;            // AI suggested reply text
@@ -143,7 +144,8 @@ const Inbox = () => {
              time: timeStr,
              unread: log.status === "pending_review" || log.status === "PENDING_REVIEW",
              hasAttachment: false,
-             autoReplied: isAutoReplied,
+             autoReplied: !!log.auto_reply_sent,
+             auto_reply_sent: !!log.auto_reply_sent,
              status: log.status || "received",
              summary: log.summary || "",
              suggestedReply: log.reply_content || "",
@@ -254,9 +256,9 @@ const Inbox = () => {
                     </p>
                     <p className="text-xs text-muted-foreground truncate">{email.preview}</p>
                     <div className="flex items-center gap-2 mt-2">
-                      {email.autoReplied && (
+                      {email.status === "replied" && (
                         <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary border-0 gap-1">
-                          <Zap className="w-2.5 h-2.5" /> Auto-replied
+                          <Zap className="w-2.5 h-2.5" /> {email.autoReplied ? "Auto-replied" : "Replied"}
                         </Badge>
                       )}
                       {email.hasAttachment && (

@@ -130,7 +130,11 @@ const EmailThread = ({ email, onClose }: EmailThreadProps) => {
               variant="outline"
               className="border-border text-muted-foreground"
               onClick={() => {
-                setReplyText(email.suggestedReply || "");
+                const cleanText = (email.suggestedReply || "")
+                  .replace(/<br\s*\/?>/gi, "\n")
+                  .replace(/<[^>]*>?/gm, "")
+                  .replace(/\*\*(.*?)\*\*/g, "$1");
+                setReplyText(cleanText);
                 setShowReply(true);
               }}
             >
@@ -140,7 +144,10 @@ const EmailThread = ({ email, onClose }: EmailThreadProps) => {
 
           <div
             className="text-sm text-foreground whitespace-pre-wrap leading-relaxed [&>b]:font-semibold [&>br]:block"
-            dangerouslySetInnerHTML={{ __html: email.suggestedReply || "" }}
+            dangerouslySetInnerHTML={{ 
+              __html: (email.suggestedReply || "")
+                .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>") 
+            }}
           />
         </div>
       )}
