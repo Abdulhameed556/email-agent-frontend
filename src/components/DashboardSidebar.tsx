@@ -50,7 +50,10 @@ const DashboardSidebar = () => {
       {/* Footer */}
       <div className="p-3 border-t border-sidebar-border">
         <button
-          onClick={() => navigate("/")}
+          onClick={() => {
+            localStorage.removeItem("aisa_token");
+            navigate("/");
+          }}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground hover:text-foreground hover:bg-sidebar-accent/50 transition-all"
         >
           <LogOut className="w-4 h-4" />
