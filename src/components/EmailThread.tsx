@@ -20,7 +20,7 @@ interface EmailThreadProps {
 }
 
 const EmailThread = ({ email, onClose }: EmailThreadProps) => {
-  const isReplied = email.status.toLowerCase() === "replied";
+  const isReplied = email.status?.toLowerCase() === "replied";
   const [replyText, setReplyText] = useState("");
   const [showReply, setShowReply] = useState(false);
   const [attachment, setAttachment] = useState<File | null>(null);

@@ -85,6 +85,7 @@ const Activity = () => {
             from: log.sender?.split("@")[0] || "Customer",
             fromEmail: log.sender || "",
             subject: log.subject || "No Subject",
+            status: log.status || "RECEIVED",
             summary: log.summary || "",
             suggestedReply: log.reply_content || "",
             thread: [

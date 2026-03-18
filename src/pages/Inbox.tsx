@@ -34,6 +34,7 @@ const mockEmails: Email[] = [
     unread: true,
     hasAttachment: false,
     autoReplied: true,
+    status: "replied",
     summary: "Customer is asking about the requirements to open a FirstGem account.",
     suggestedReply: "Dear Tunde,<br><br>Thank you for reaching out regarding the FirstGem account.<br><br>The FirstGem account is designed to empower women to achieve their financial goals. To open a FirstGem account, you will need the following:<br>1. A completed account opening form.<br>2. Two recent passport photographs.<br>3. A valid means of identification (National ID, Driver's License, or International Passport).<br>4. A utility bill issued within the last 3 months.<br><br>You can initiate the account opening process via our FirstMobile App or visit any First Bank branch nearest to you.<br><br>Kind regards,<br><b>AISA — First Bank Virtual Assistant</b>",
     thread: [
@@ -51,6 +52,7 @@ const mockEmails: Email[] = [
     unread: true,
     hasAttachment: false,
     autoReplied: false,
+    status: "pending_review",
     summary: "Customer was debited N20,000 but the ATM did not dispense cash.",
     suggestedReply: "Dear Ngozi,<br><br>Could you please provide more details regarding this specific transaction? I would be happy to look into this specifically for you and ensure you receive the most accurate assistance.<br><br>Kindly provide the <b>Transaction Reference Number</b> and the <b>Value Date</b> of the transaction so we can investigate this missing funds issue.<br><br>Kind regards,<br><b>AISA — First Bank Virtual Assistant</b>",
     thread: [
@@ -67,6 +69,7 @@ const mockEmails: Email[] = [
     unread: false,
     hasAttachment: true,
     autoReplied: true,
+    status: "replied",
     summary: "Corporate client querying account maintenance fee deductions.",
     thread: [
       { from: "Adeyemi Tech Solutions", body: "We noticed a deduction for account maintenance fee that seems higher than usual for the month of February. See attached statement. Please clarify.", time: "1h ago" },
@@ -83,6 +86,7 @@ const mockEmails: Email[] = [
     unread: false,
     hasAttachment: false,
     autoReplied: false,
+    status: "received",
     summary: "Google notified of a new Windows sign‑in; check security activity.",
     thread: [
       {
