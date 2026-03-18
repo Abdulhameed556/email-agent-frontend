@@ -32,20 +32,28 @@ async function apiFetch(path: string, options: RequestInit = {}) {
 
 export const api = {
   getLogs: () => apiFetch("/api/logs"),
-  sendReply: (logId: number, content: string, file?: File) => {
+  sendReply: (logId: number, content: string, file?: File | null) => {
+    const token = localStorage.getItem("aisa_token");
     const formData = new FormData();
     formData.append("reply_content", content);
-    if (file) formData.append("file", file);
-    
+    if (file) {
+      formData.append("file", file);
+    }
+    const headers: HeadersInit = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
     return fetch(`${BASE_URL}/api/logs/${logId}/send`, {
       method: "POST",
-      headers: {
-        ...(localStorage.getItem("aisa_token") ? { "Authorization": `Bearer ${localStorage.getItem("aisa_token")}` } : {}),
-      },
       credentials: "include",
+      headers,
       body: formData,
     }).then(async (res) => {
-      if (!res.ok) throw new Error(`Reply error: ${res.status}`);
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("API Error Response:", errorText);
+        throw new Error(`API error: ${res.status}`);
+      }
       return res.json();
     });
   },

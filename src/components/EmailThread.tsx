@@ -39,7 +39,7 @@ const EmailThread = ({ email, onClose }: EmailThreadProps) => {
     }
     setSending(true);
     try {
-      await api.sendReply(Number(email.id), replyText, attachment || undefined);
+      await api.sendReply(Number(email.id), replyText, attachment);
       toast.success("Reply sent successfully");
       setShowReply(false);
       setAttachment(null);
