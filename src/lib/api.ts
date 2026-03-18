@@ -32,11 +32,23 @@ async function apiFetch(path: string, options: RequestInit = {}) {
 
 export const api = {
   getLogs: () => apiFetch("/api/logs"),
-  sendReply: (logId: number, content: string) =>
-    apiFetch(`/api/logs/${logId}/send`, {
+  sendReply: (logId: number, content: string, file?: File) => {
+    const formData = new FormData();
+    formData.append("reply_content", content);
+    if (file) formData.append("file", file);
+    
+    return fetch(`${BASE_URL}/api/logs/${logId}/send`, {
       method: "POST",
-      body: JSON.stringify({ reply_content: content }),
-    }),
+      headers: {
+        ...(localStorage.getItem("aisa_token") ? { "Authorization": `Bearer ${localStorage.getItem("aisa_token")}` } : {}),
+      },
+      credentials: "include",
+      body: formData,
+    }).then(async (res) => {
+      if (!res.ok) throw new Error(`Reply error: ${res.status}`);
+      return res.json();
+    });
+  },
   setAutoReply: (enabled: boolean) =>
     apiFetch("/api/settings/auto-reply", {
       method: "POST",

@@ -33,12 +33,17 @@ const EmailThread = ({ email, onClose }: EmailThreadProps) => {
   };
 
   const handleSend = async () => {
-    if (!replyText.trim()) return;
+    if (!replyText.trim() && !attachment) {
+      toast.error("Please provide a reply message or an attachment");
+      return;
+    }
     setSending(true);
     try {
-      await api.sendReply(Number(email.id), replyText);
+      await api.sendReply(Number(email.id), replyText, attachment || undefined);
       toast.success("Reply sent successfully");
       setShowReply(false);
+      setAttachment(null);
+      setReplyText("");
     } catch (error: any) {
       toast.error(`Failed to send reply: ${error.message}`);
     } finally {
