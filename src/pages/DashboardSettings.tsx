@@ -22,7 +22,8 @@ const DashboardSettings = () => {
       const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
           return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
       }).join(''));
-      return JSON.parse(jsonPayload).email || "User";
+      const payload = JSON.parse(jsonPayload);
+      return payload.email || payload.sub || "User";
     } catch (e) {
       return "User";
     }

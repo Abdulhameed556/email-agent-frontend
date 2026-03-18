@@ -103,8 +103,10 @@ const Inbox = () => {
     try {
       if (!silent) setLoading(true);
       const data = await api.getLogs();
+      console.log("Fetched Logs Response:", data);
       
       const logsArray: any[] = Array.isArray(data) ? data : data.logs || [];
+      console.log("Extracted Logs Array:", logsArray);
       
       const mapped: Email[] = logsArray.map((log: any) => {
           const receivedDate = new Date(log.created_at);
