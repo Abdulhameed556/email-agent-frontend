@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import EmailThread from "@/components/EmailThread";
 import { api } from "@/lib/api";
+import { toast } from "sonner";
 
 interface Email {
   id: string;
@@ -98,9 +99,9 @@ const Inbox = () => {
   const [emails, setEmails] = useState<Email[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchLogs = async () => {
+  const fetchLogs = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const data = await api.getLogs();
       
       const logsArray: any[] = Array.isArray(data) ? data : data.logs || [];
@@ -143,11 +144,12 @@ const Inbox = () => {
           };
       });
       setEmails(mapped);
-    } catch (e) {
+    } catch (e: any) {
       console.error("Failed to fetch logs", e);
+      if (!silent) toast.error("Connection issue: " + (e.message || "Could not reach backend"));
       setEmails([]);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -160,7 +162,12 @@ const Inbox = () => {
       // Clean up the URL to hide the token
       window.history.replaceState({}, document.title, window.location.pathname);
     }
+    
     fetchLogs();
+    
+    // Auto refresh every 10 seconds
+    const interval = setInterval(() => fetchLogs(true), 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const filteredEmails = emails.filter(
@@ -180,7 +187,7 @@ const Inbox = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={fetchLogs} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-all">
+          <button onClick={() => fetchLogs()} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-all">
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
           <button className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-all">
