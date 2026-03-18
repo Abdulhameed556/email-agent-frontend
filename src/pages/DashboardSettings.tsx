@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Zap, Bell, Shield, Mail, Globe } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
@@ -32,6 +32,20 @@ const DashboardSettings = () => {
 
   const [connectedEmail, setConnectedEmail] = useState(getLoggedInEmail());
   const [isToggling, setIsToggling] = useState(false);
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const data = await api.getLogs();
+        if (data && typeof data.auto_reply !== 'undefined') {
+          setAutoResponderActive(data.auto_reply);
+        }
+      } catch (err) {
+        console.error("Failed to fetch settings", err);
+      }
+    };
+    fetchStatus();
+  }, []);
 
   const handleToggleAutoReply = async (checked: boolean) => {
     setIsToggling(true);

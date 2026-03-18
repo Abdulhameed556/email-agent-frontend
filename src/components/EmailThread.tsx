@@ -11,6 +11,7 @@ interface EmailThreadProps {
     from: string;
     fromEmail: string;
     subject: string;
+    status: string;
     summary?: string;
     suggestedReply?: string;
     thread: { from: string; body: string; time: string; isAuto?: boolean }[];
@@ -19,6 +20,7 @@ interface EmailThreadProps {
 }
 
 const EmailThread = ({ email, onClose }: EmailThreadProps) => {
+  const isReplied = email.status.toLowerCase() === "replied";
   const [replyText, setReplyText] = useState("");
   const [showReply, setShowReply] = useState(false);
   const [attachment, setAttachment] = useState<File | null>(null);
@@ -116,8 +118,8 @@ const EmailThread = ({ email, onClose }: EmailThreadProps) => {
         ))}
       </div>
 
-      {/* AI suggested reply */}
-      {email.suggestedReply && (
+      {/* AI suggested reply - Only show if we haven't replied yet */}
+      {email.suggestedReply && !isReplied && (
         <div className="p-5 border-t border-border bg-secondary/50">
           <div className="flex items-center justify-between mb-1">
             <h3 className="text-xs font-semibold uppercase text-primary">
@@ -143,91 +145,102 @@ const EmailThread = ({ email, onClose }: EmailThreadProps) => {
         </div>
       )}
 
-      {/* Reply Section */}
-      <div className="p-5 border-t border-border">
-        {showReply ? (
-          <div className="space-y-3">
+      {/* Reply Section - Hide if already replied (unless user intentionally wants to reply again, but for now we follow the 'duplicated' report) */}
+      {!isReplied && (
+        <div className="p-5 border-t border-border">
+          {showReply ? (
+            <div className="space-y-3">
 
-            {/* Reply textarea */}
-            <Textarea
-              value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
-              placeholder="Write your reply..."
-              className="bg-secondary border-border text-foreground placeholder:text-muted-foreground min-h-[100px] resize-none"
-            />
+              {/* Reply textarea */}
+              <Textarea
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                placeholder="Write your reply..."
+                className="bg-secondary border-border text-foreground placeholder:text-muted-foreground min-h-[100px] resize-none"
+              />
 
-            {/* Show attached file */}
-            {attachment && (
-              <p className="text-xs text-muted-foreground">
-                Attached: {attachment.name}
-              </p>
-            )}
+              {/* Show attached file */}
+              {attachment && (
+                <p className="text-xs text-muted-foreground">
+                  Attached: {attachment.name}
+                </p>
+              )}
 
-            {/* Hidden file input */}
-            <input
-              type="file"
-              id="fileUpload"
-              className="hidden"
-              onChange={handleFileChange}
-            />
+              {/* Hidden file input */}
+              <input
+                type="file"
+                id="fileUpload"
+                className="hidden"
+                onChange={handleFileChange}
+              />
 
-            {/* Buttons */}
-            <div className="flex gap-2 justify-end items-center">
+              {/* Buttons */}
+              <div className="flex gap-2 justify-end items-center">
 
-              {/* Attach File */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  document.getElementById("fileUpload")?.click()
-                }
-                className="border-border text-muted-foreground"
-              >
-                <Paperclip className="w-3.5 h-3.5 mr-1.5" />
-                Attach File
-              </Button>
+                {/* Attach File */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    document.getElementById("fileUpload")?.click()
+                  }
+                  className="border-border text-muted-foreground"
+                >
+                  <Paperclip className="w-3.5 h-3.5 mr-1.5" />
+                  Attach File
+                </Button>
 
-              {/* Cancel */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowReply(false)}
-                className="border-border text-muted-foreground"
-              >
-                Cancel
-              </Button>
+                {/* Cancel */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowReply(false)}
+                  className="border-border text-muted-foreground"
+                >
+                  Cancel
+                </Button>
 
-              {/* Send */}
-              <Button
-                size="sm"
-                onClick={handleSend}
-                disabled={sending}
-                className="gradient-primary text-primary-foreground shadow-glow"
-              >
-                {sending ? (
-                  <div className="w-3.5 h-3.5 mr-1.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <Send className="w-3.5 h-3.5 mr-1.5" />
-                )}
-                Send
-              </Button>
+                {/* Send */}
+                <Button
+                  size="sm"
+                  onClick={handleSend}
+                  disabled={sending}
+                  className="gradient-primary text-primary-foreground shadow-glow"
+                >
+                  {sending ? (
+                    <div className="w-3.5 h-3.5 mr-1.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Send className="w-3.5 h-3.5 mr-1.5" />
+                  )}
+                  Send
+                </Button>
 
+              </div>
             </div>
-          </div>
-        ) : (
-          <Button
-            variant="outline"
-            onClick={() => {
-              if (email.suggestedReply) setReplyText(email.suggestedReply);
-              setShowReply(true);
-            }}
-            className="border-border text-foreground hover:bg-secondary"
-          >
-            <Reply className="w-4 h-4 mr-2" />
-            Reply
-          </Button>
-        )}
-      </div>
+          ) : (
+            <Button
+              variant="outline"
+              onClick={() => {
+                if (email.suggestedReply) setReplyText(email.suggestedReply);
+                setShowReply(true);
+              }}
+              className="border-border text-foreground hover:bg-secondary"
+            >
+              <Reply className="w-4 h-4 mr-2" />
+              Reply
+            </Button>
+          )}
+        </div>
+      )}
+      
+      {isReplied && (
+        <div className="p-5 border-t border-border text-center">
+           <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+             <Zap className="w-4 h-4 text-primary" />
+             This email has already been addressed by FirstBank AI.
+           </p>
+        </div>
+      )}
     </div>
   );
 };

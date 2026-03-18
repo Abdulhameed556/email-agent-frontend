@@ -17,6 +17,7 @@ interface Email {
   unread: boolean;
   hasAttachment: boolean;
   autoReplied: boolean;
+  status: string;
   summary?: string;                   // short brief summary like screenshot
   suggestedReply?: string;            // AI suggested reply text
   thread: { from: string; body: string; time: string; isAuto?: boolean }[];
@@ -139,6 +140,7 @@ const Inbox = () => {
              unread: log.status === "pending_review" || log.status === "PENDING_REVIEW",
              hasAttachment: false,
              autoReplied: isAutoReplied,
+             status: log.status || "received",
              summary: log.summary || "",
              suggestedReply: log.reply_content || "",
              thread: thread
