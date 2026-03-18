@@ -103,10 +103,9 @@ const Inbox = () => {
     try {
       if (!silent) setLoading(true);
       const data = await api.getLogs();
-      console.log("Fetched Logs Response:", data);
+      console.log("[AISA] Logs data received:", data);
       
-      const logsArray: any[] = Array.isArray(data) ? data : data.logs || [];
-      console.log("Extracted Logs Array:", logsArray);
+      const logsArray: any[] = Array.isArray(data) ? data : (data?.logs || []);
       
       const mapped: Email[] = logsArray.map((log: any) => {
           const receivedDate = new Date(log.created_at);
@@ -147,8 +146,8 @@ const Inbox = () => {
       });
       setEmails(mapped);
     } catch (e: any) {
-      console.error("Failed to fetch logs", e);
-      if (!silent) toast.error("Connection issue: " + (e.message || "Could not reach backend"));
+      console.error("[AISA] API FETCH ERROR:", e);
+      if (!silent) toast.error(`Inbox error: ${e.message || 'Unknown error'}`);
       setEmails([]);
     } finally {
       if (!silent) setLoading(false);
