@@ -152,6 +152,14 @@ const Inbox = () => {
   };
 
   useEffect(() => {
+    // Check if token was passed in the URL (from backend OAuth redirect)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlToken = urlParams.get('token');
+    if (urlToken) {
+      localStorage.setItem("aisa_token", urlToken);
+      // Clean up the URL to hide the token
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
     fetchLogs();
   }, []);
 
